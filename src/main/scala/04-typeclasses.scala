@@ -141,15 +141,24 @@ object type_classes:
       extension (a: A) def uuid: UUID
   
     object Identified:
-      given Identified[UUID]:
+      given Identified[UUID]: // could change to given something as Identified[UUID]
         extension (a: UUID) def uuid: UUID = a
 
-    import Identified.given_Identified_UUID
+    import Identified.given_Identified_UUID // and import that name here instead
     ( ??? : UUID).uuid
+
+    // // OR
+    def test(using uuid: Identified[UUID]) =
+      ( ??? : UUID).uuid
+
+    test
+
+    // // OR
+    import Identified.given
 
   // ----
 
-  
+
   trait PrettyPrint[-A]:
     extension (a: A) def prettyPrint: String
 
@@ -167,6 +176,11 @@ object type_classes:
    * data type `Person` that renders the person in a pretty way.
    */
   // given
+  given PrettyPrint[Person]:
+    extension (p: Person) def prettyPrint: String = s"(name = ${p.name}, age = ${p.age})"
+
+  val jon = Person("Pretty", 40)
+  jon.prettyPrint
 
   /**
    * EXERCISE 2
