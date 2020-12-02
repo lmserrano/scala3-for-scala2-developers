@@ -127,6 +127,7 @@ package optional_braces:
     while (i < n)
       println("All work and no play makes Jack a dull boy")
       i = i + 1
+    end while // Add an explicit end marker (optional, useful for big code blocks)
 
   // ----
   def a(n: Int): Unit =
@@ -158,6 +159,7 @@ package optional_braces:
   def conditional3(answer: Int) = 
     if (answer == 42)
       println("The answer to the meaning of life, the universe, and everything.")
+    end if // Explicitly marking the end of the block
   end conditional3
 
   /**
