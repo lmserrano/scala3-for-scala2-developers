@@ -13,45 +13,42 @@ package optional_braces:
    * 
    * Refactor this class declaration so that it does not utilize curly braces.
    */
-  class ClassDecl {
+  class ClassDecl: // This ":" colon lets Scala know that the indentation will work as the curly braces
     def run() = println("Hello World!")
-  }
 
   /**
    * EXERCISE 2
    * 
    * Refactor this trait declaration so that it does not utilize curly braces.
    */
-  trait TraitDecl {
+  trait TraitDecl:
     def run() = println("Hello World!")
-  }
 
   /**
    * EXERCISE 3
    * 
    * Refactor this object body so that it does not utilize curly braces.
    */
-  object ObjectBody {
+  object ObjectBody:
     def run() = println("Hello World!")
-  }
+
+    def runMore() = println("Hello again!") // We can also add new things, provided they same the correct indentation
 
   /**
    * EXERCISE 4
    * 
    * Refactor this anonymous class so that it does not utilize curly braces.
    */
-  val anonClass = new TraitDecl {
+  val anonClass = new TraitDecl:
     def runMore() = println("Goodbye World!")
-  }
 
   /**
    * EXERCISE 5
    * 
    * Refactor this package declaration so that it does not utilize curly braces.
    */
-  package package_decl {
+  package package_decl:
     def runEvenMore() = println("See you later!")
-  }
 
   /**
    * EXERCISE 6
