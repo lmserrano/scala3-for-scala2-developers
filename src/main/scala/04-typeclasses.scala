@@ -156,6 +156,9 @@ object type_classes:
     // // OR
     import Identified.given
 
+    // // OR
+    import Identified.{ given Identified[UUID] }
+
   // ----
 
 
@@ -168,6 +171,17 @@ object type_classes:
   "foo".prettyPrint
 
   final case class Person(name: String, age: Int)
+
+  // // Extras
+  // trait PrettyPrintF[-F[+_]]:
+  //   extension [A] (fa: F[A]) def prettyPrint(using PrettyPrint[A]): String
+
+  // // Improving on
+
+  trait Derive[F[_], TC[_]]:
+    def derive[A](using TC[A]): TC[F[A]]
+
+  type PrettyPrintF[F[_]] = Derive[F, PrettyPrint]
 
   /**
    * EXERCISE 1
@@ -189,20 +203,22 @@ object type_classes:
    * for the data type `Int` that renders the integer in a pretty way.
    */
   // given intPrettyPrint as ...
+  given intPrettyPrint2 as PrettyPrint[Int]:
+    extension (i: Int) def prettyPrint: String = i.toString
 
   /**
    * EXERCISE 3
    * 
    * Using the `summon` function, summon an instance of `PrettyPrint` for `String`.
    */
-  val stringPrettyPrint: PrettyPrint[String] = ???
+  val stringPrettyPrint: PrettyPrint[String] = summon[PrettyPrint[String]]
 
   /**
    * EXERCISE 4
    * 
    * Using the `summon` function, summon an instance of `PrettyPrint` for `Int`.
    */
-  val intPrettyPrint: PrettyPrint[Int] = ???
+  val intPrettyPrint: PrettyPrint[Int] = summon[PrettyPrint[Int]]
 
   /**
    * EXERCISE 5
@@ -211,7 +227,10 @@ object type_classes:
    * `A` for which a `PrettyPrint` instance exists, can both generate a pretty-print string, and 
    * print it out to the console using `println`.
    */
-  def prettyPrintIt = ???
+  //def prettyPrintIt1[A](a: A)(using pp: PrettyPrint[A]) = println(pp.extension_prettyPrint(a))
+  def prettyPrintIt1[A](a: A)(using pp: PrettyPrint[A]) = println(pp.prettyPrint(a)) // TODO I'm missing something here around 17:00 UTC+0
+  // // OR
+  def prettyPrintIt2[A: PrettyPrint](a: A) = println(a.prettyPrint)
 
   /**
    * EXERCISE 6
@@ -219,8 +238,11 @@ object type_classes:
    * With the help of both `given` and `using`, create an instance of the `PrettyPrint` type class
    * for a generic `List[A]`, given an instance of `PrettyPrint` for the type `A`.
    */
-  given [A] as PrettyPrint[List[A]]:
-    extension (a: List[A]) def prettyPrint: String = ???
+  // given [A] as PrettyPrint[List[A]]:
+  //   extension (a: List[A]) def prettyPrint: String = ???
+  given [A](using pp: PrettyPrint[A]) as PrettyPrint[List[A]]:
+    extension (a: List[A]) def prettyPrint: String =
+      a.map(_.prettyPrint).mkString("\n")
 
   /**
    * EXERCISE 7
@@ -229,6 +251,9 @@ object type_classes:
    * type class for a generic `Vector[A]`, given an instance of `PrettyPrint` for the type `A`.
    */
   // given vectorPrettyPrint[A] as ...
+
+  given vectorPrettyPrint[A](using PrettyPrint[A]) as PrettyPrint[Vector[A]]:
+    extension (a: Vector[A]) def prettyPrint: String = a.map(_.prettyPrint).mkString(",")
 
   import scala.Eql._ 
 
