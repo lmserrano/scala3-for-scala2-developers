@@ -74,12 +74,15 @@ object type_classes:
 
     // We are defining na instance of JsonCodec for my "Person" data type.
     given JsonCodec[Person]:
-      extension (a: Person) def serialize(a: Person): Json = ???
+      extension (a: Person) def serialize: Json = ???
       def deserialize(json: Json): Person = ???
 
-    // We say we will be using these JsonCodec capabilities for type A
-    def publish[A](endpoint: Endpoint[A])(using json: JsonCodec[A]) =
-      ???
+    // // We say we will be using these JsonCodec capabilities for type A
+    //def publish[A](endpoint: Endpoint[A])(using json: JsonCodec[A]) =
+    //  ???
+    // // OR
+    // def publish[A: JsonCodec](endpoint: Endpoint[A]) = ???
+
 
     // The difference between implicit def and implicit val?
     // We are operating at an higher level with "given"...
@@ -92,6 +95,36 @@ object type_classes:
       extension (list: List[A]) def serialize: Json = ???
       def deserialize(json: Json): List[A] = ???
 
+    // // OR
+    // object JsonCodec:
+    //   given [A: JsonCodec] as JsonCodec[List[A]]:
+    //     extension (list: List[A]) def serialize: Json = ???
+    //     def deserialize(json: Json): List[A] = ???
+
+
+    // we can use naming:
+    // object Person:
+      // given jsonCodecPerson as JsonCodec[Person]:
+      //   extension (a: Person) def serialize: Json = ???
+      //   def deserialize(json: Json): Json = ???
+
+
+    // // There was another way to do this before, in the video. Re-watch.
+    def publish[A: JsonCodec](endpoint: Endpoint[A]) =  // or Endpoint[A))(using jsonCodec: JsonCodec[A]) = ... // If we set this, when we call publish with `publish(???: Endpoint[List[Person]])` , we don't have to specify a parameter because Scala will use the "using" to find the codec (or may actually have to build that instance and construct it if necessary)
+      val jsonCodec = summon[JsonCodec[A]] // "summon" allows to materialize the JsonCodec value for the provided type. Serves the same purposes as implicitly in Scala 2.x
+      ???
+
+  // ----
+
+  // Review
+  // Type Classes
+  // Traits allow us to specify how things can be similar. JsonCodec example. The way in which a Person can be the same as a Catalogue, for example. We are abstracting over the similar ways in which we can serialize
+  // How do we abstract? We use a typeclass (to avoid the other drawbacks we saw of using an interface)
+
+  // 1. We create a type class that talks about how these different data types are the same
+  // 2. Then we create instances or implementations of this trait, for different data types in our application, with the `given` keyword, `as` type JsonCodec[Person/Whatever]
+  // 3. We can put that into the companion object of the data type. To make sure Scala can find it when it's looking for it in a context-bound usage with publish and summon
+  // 4. In more complex scenarios, with Lists and other polymorphic types, we can define a polymorphic inductive instance vs the monomorphic jsoncodec person we saw before, which we named with `as JsonCodec[Person]`
 
   // ----
 
