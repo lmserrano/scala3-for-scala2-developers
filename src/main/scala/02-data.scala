@@ -194,10 +194,36 @@ package enums:
    * 
    * Take special note of the inferred type parameters in the case constructors!
    */
-  sealed trait Result[+Error, +Value]
-  object Result:
-    final case class Succeed[Value](value: Value) extends Result[Nothing, Value]
-    final case class Fail[Error](error: Error) extends Result[Error, Nothing]
+
+  // // Polymorphic SumType
+  // // This is a mess!...
+  // // In Haskell it would be:
+  // // data Result e v = Succeed v | Fail e
+  // // but in Scala 2 ...:
+  // sealed trait Result[+Error, +Value]
+  // object Result:
+  //   final case class Succeed[Value](value: Value) extends Result[Nothing, Value]
+  //   final case class Fail[Error](error: Error) extends Result[Error, Nothing]
+
+  enum Result[+Error, +Value]:
+    case Success(value: Value)
+    case Fail(error: Error)
+
+  // val result = Result.Succeed(12) // The inferred type of Result will be... Result[Nothing, Int]
+  // val resultFailed = Fail("Error") //
+
+  // Left[Int, String] // For historical reasons takes 2 type parameters...
+  // Left(12) // Scala will often infer Nothing, and that is correct, although it will not always happen
+
+  // val result2 = new Result.Succeed[Int, Int](12)
+  // val result3 = new Result.Succeed[Int, Int](12)
+
+
+  /* // We can also use it with a Phantom `R`
+  enum Result[-R, +E, +A]:
+    case Succeed(value: A)
+    case Fail(error: E)
+  */
 
   /**
    * EXERCISE 5
