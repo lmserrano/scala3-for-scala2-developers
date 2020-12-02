@@ -88,15 +88,6 @@ package enums:
    * 
    * Convert this "sealed trait" to an enum.
    */
-  // sealed trait DayOfWeek
-  // object DayOfWeek:
-  //   case object Sunday extends DayOfWeek
-  //   case object Monday extends DayOfWeek
-  //   case object Tuesday extends DayOfWeek
-  //   case object Wednesday extends DayOfWeek
-  //   case object Thursday extends DayOfWeek
-  //   case object Friday extends DayOfWeek
-  //   case object Saturday extends DayOfWeek
   enum DayOfWeek:
     case Sunday
     case Monday
@@ -112,8 +103,25 @@ package enums:
    * Explore interop with Java enums by finding all values of `DayOfWeek`, and by 
    * finding the value corresponding to the string "Sunday".
    */
-  def daysOfWeek: Array[DayOfWeek] = ???
-  def sunday: DayOfWeek = ???
+  def daysOfWeek: Array[DayOfWeek] = DayOfWeek.values // Java Interop. Only because we don't have any parameters in the enum cases. Adding a single parameter to one of them this would go away.
+  def sunday: DayOfWeek = DayOfWeek.valueOf("Sunday")
+
+  // ----
+
+  /*
+  pagoda_5bToday at 12:49 PM
+  if you look here: http://dotty.epfl.ch/docs/reference/enums/enums.html#implementation
+  I guess you can figure out that enum cases can't have custom methods because they're all actually implemented as individual instances of the super trait... not specific classes
+  DayOfWeek.valueOf("don't treat me like this... @_@")
+
+  :cry:
+  jarek000000Today at 12:52 PM
+  interesting that name() does not work:
+  println(enums.DayOfWeek.Sunday.name()
+  */
+  // // This seems to be a bug, since name() appears not to exist
+  //println(enums.DayOfWeek.Sunday.name()
+  // ----
 
   /**
    * EXERCISE 3
@@ -122,12 +130,62 @@ package enums:
    * 
    * Take special note of the inferred type of any of the case constructors!
    */
-  sealed trait Color 
-  object Color:
-    case object Red extends Color 
-    case object Green extends Color 
-    case object Blue extends Color
-    final case class Custom(red: Int, green: Int, blue: Int) extends Color
+  enum Color:
+    case Red
+    case Green
+    case Blue
+    case Custom(red: Int, green: Int, blue: Int)
+
+  // // With this, the type of Custom is Color! This is a significant and inumerously important difference
+  // // We will always upcast the result to Color when using enum
+
+  //val custom: Color.Custom = Color.Custom(12, 123, 123)
+  val custom = Color.Custom(12, 123, 123)
+
+  def methods(c: Color.Custom) = ???
+
+  // sealed trait Color 
+  // object Color:
+  //   case object Red extends Color 
+  //   case object Green extends Color 
+  //   case object Blue extends Color
+  //   final case class Custom(red: Int, green: Int, blue: Int) extends Color
+  //
+  // // With this, the type of Custom would be Custom
+  //
+  //val custom: Color = Color.Custom(123, 123, 123)
+  //
+  // // Why is this difference important, between the sealed and new enum approach? Because of type inference!
+  //
+  // // This wouldn't compile, and have a weird error message
+  // def ex = List(None)
+  // // Scala would infer the type of our accumulator. Which is not exactly correct because although it started correct, we want it to broaden up thoughout time. Like, a None to a Some(...)
+  // // In Scala 2 we have bad type inference sometimes and a bad experience. Scala 3 intends to improve on this, hence why the enum approach too.
+  // def ex2 = List(1, 2, 3).foldLeft(None) {
+  //   case (none, i) if i ==2 => Some(i)
+  //   case (some, _) => some
+  // }
+
+  // Really helps with polymorphic methods
+
+  // Like this, it compiles
+  def ex2 = List(1, 2, 3).foldLeft(None: Option[Int]) {
+    case (none, i) if i ==2 => Some(i)
+    case (some, _) => some
+  }
+
+  val a1 = List.empty // Nil is not the same. List.empty is polymorphic. When you use Nil you get back Option[Nothing]
+  val a2 = Option.empty // None is not the same. Same thing here...
+
+  val a3 = List.empty[Int]
+  val a4 = Option.empty[String]
+
+  // We get something of type Color, regardless if Red, or Custom, or anything else
+  // => Improved user experience!
+  def ex3 = List(1, 2, 3).foldLeft(Color.Red) {
+    case (Color.Red, i) if i ==2 => Color.Custom(i, i, i)
+    case (some, _) => some
+  }
 
   /**
    * EXERCISE 4
