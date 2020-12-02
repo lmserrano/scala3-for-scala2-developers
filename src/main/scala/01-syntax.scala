@@ -13,7 +13,7 @@ package optional_braces:
    * 
    * Refactor this class declaration so that it does not utilize curly braces.
    */
-  class ClassDecl: // This ":" colon lets Scala know that the indentation will work as the curly braces
+  class ClassDecl: // This ":" colon lets Scala know that the indentation will work as the curly braces. Used only for the template decorations.
     def run() = println("Hello World!")
 
   /**
@@ -56,9 +56,9 @@ package optional_braces:
    * Refactor this `if` statement so that it does not utilize curly braces:
    */
   def conditional() = 
-    if (2 + 2 != 4) {
+    if (2 + 2 != 4) // Here we don't use the ":" operator. Also, everything with the correct indentation will be within the first block of the "if"
+      println("hello!")
       throw new IllegalStateException("The universe is broken")
-    }
 
   /**
    * EXERCISE 7
@@ -66,11 +66,10 @@ package optional_braces:
    * Refactor this if/else statement so that it does not utilize curly braces.
    */
   def conditional2() = 
-    if ("Sherlock Holmes".startsWith("Sher")) {
+    if ("Sherlock Holmes".startsWith("Sher"))
       println("He is sure!")
-    } else {
+    else
       println("He is uncertain!")
-    }
 
   /**
    * EXERCISE 8
@@ -78,21 +77,19 @@ package optional_braces:
    * Refactor this match clause so that it does not utilize curly braces.
    */
   def joke(v: String) = 
-    v match {
+    v match
       case "knock, knock" => println("Who's there?")
       case _ => println("Unknown input!")
-    }
 
   /**
    * EXERCISE 9
    * 
    * Refactor this method body so that it does not utilize curly braces.
    */
-  def whatIsYourName = {
+  def whatIsYourName =
     println("What is your name?")
     val name = scala.io.StdIn.readLine()
     println(s"Hello, ${name}!")
-  }
 
   /**
    * EXERCISE 9
@@ -100,11 +97,10 @@ package optional_braces:
    * Refactor this try/catch so that it does not utilize curly braces.
    */
   def tryItAndCatchIt = 
-    try {
+    try
       throw new IllegalStateException("Wyoming")
-    } catch {
+    catch
       case _ : IllegalStateException => println("That state is illegal!")
-    }
   
   /**
    * EXERCISE 10
@@ -114,11 +110,11 @@ package optional_braces:
   def forComprehension =
     val numbers = List(1, 2, 9, 3, -1, 6, 5, 2)
 
-    for {
+    for
       number1 <- numbers 
       number2 <- numbers 
       if ((number1 - number2).abs == 2)
-    } yield (number1, number2)
+    yield (number1, number2)
 
   /**
    * EXERCISE 11
@@ -128,10 +124,22 @@ package optional_braces:
   def whileLoop(n: Int) = 
     var i = 0 
 
-    while (i < n) {
+    while (i < n)
       println("All work and no play makes Jack a dull boy")
       i = i + 1
-    }
+
+  // ----
+  def a(n: Int): Unit =
+    println(s"Hello $n")
+
+  // Rules
+  // 1 - If declaring something new, use ":" colon operator
+  // 2 - If not declaring something new (if, try, catch, match, for comprehension), just delete the curly braces and use the indentation
+  // The curly braces syntax is option. Probably you shouldn't mix both.
+  // ----
+
+  // If we have a lot of lines, it may be difficult to know which code matches which blocks. IDEs like VSCore draw some lines to help us, but Scala gives us the "End markers" feature to also explicitly identify this.
+  // It is like curly braces, but they can't appear just anywhere.
 
   /**
    * EXERCISE 12
@@ -140,6 +148,7 @@ package optional_braces:
    */
   abstract class UserRepository:
     def getUserName(id: String): String
+  end UserRepository // This is an End marker, that explicitly denotes the end of the `UserRepository` declaration
   
   /**
    * EXERCISE 13
@@ -149,7 +158,8 @@ package optional_braces:
   def conditional3(answer: Int) = 
     if (answer == 42)
       println("The answer to the meaning of life, the universe, and everything.")
-  
+  end conditional3
+
   /**
    * EXERCISE 14
    * 
@@ -164,6 +174,7 @@ package optional_braces:
     println("......")
     println(".......")
     println("........")
+  end tooBigMethod
 
   /**
    * EXERCISE 15
@@ -175,6 +186,7 @@ package optional_braces:
       throw new IllegalStateException("Wyoming")
     catch
       case _ : IllegalStateException => println("That state is illegal!")
+    end try // There is no name, so we use the keyword `end` followed by the keyword that opened the block
 
   /*
    * Optional braces apply to other constructs not yet introduced, including enums, givens, and 
