@@ -255,7 +255,8 @@ object type_classes:
   given vectorPrettyPrint[A](using PrettyPrint[A]) as PrettyPrint[Vector[A]]:
     extension (a: Vector[A]) def prettyPrint: String = a.map(_.prettyPrint).mkString(",")
 
-  import scala.Eql._ 
+  //import scala.Eql._ 
+  import scala.CanEqual._
 
   /**
    * EXERCISE 8
@@ -263,7 +264,7 @@ object type_classes:
    * Using the `derives` clause, derive an instance of the type class `Eql` for 
    * `Color`.
    */
-  enum Color:
+  enum Color derives CanEqual: //, Show, Ordering, EncodeJson, DecodeJson, Tabular: //, ... :
     case Red 
     case Green 
     case Blue
