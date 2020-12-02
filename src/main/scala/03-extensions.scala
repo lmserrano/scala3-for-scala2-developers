@@ -71,7 +71,7 @@ object ext_methods:
    * Add an extension method to `Email` to retrieve the username of the email address (the part 
    * of the string before the `@` symbol).
    */
-  extension (e: Email) def username: String = ???
+  extension (e: Email) def username: String = e.value.takeWhile(_ != '@')
 
   val sherlock = Email("sherlock@holmes.com").username
 
@@ -82,6 +82,7 @@ object ext_methods:
    * the string after the `@` symbol).
    */
   // extension
+  extension (e: Email) def server: String = e.value.dropWhile(_ != '@').tail
 
   /**
    * EXERCISE 3
@@ -89,7 +90,15 @@ object ext_methods:
    * Add an extension method to `Option[A]` that can zip one option with another `Option[B]`, to 
    * return an `Option[(A, B)]`.
    */
-  // extension 
+  // extension
+  extension [A, B] (opt: Option[A]):
+    def zip(that: Option[B]): Option[(A, B)] =
+      for
+        a <- opt
+        b <- that
+      yield (a, b)
+
+  // Finally we can now zip options together and get back an option
 
   /**
    * A rational number is one in the form n/m, where n and m are integers.
@@ -105,16 +114,28 @@ object ext_methods:
    */
   // extension
 
+  // Let's add a collection of extension methods to the same type
+  object rational_extensions: // We've decided to put them all under a single object so that we can just import it if we want to import all these extension methods
+    extension (self: Rational):
+      def * (that: Rational): Rational = ???
+      def + (that: Rational): Rational = ???
+      def - (that: Rational): Rational = ???
+  
   /**
    * EXERCISE 5
    * 
    * Convert this implicit syntax class to use extension methods.
    */
-  implicit class StringOps(self: String):
-    def equalsIgnoreCase(that: String) = self.toLowerCase == that.toLowerCase
+  // implicit class StringOps(self: String):
+  //   def equalsIgnoreCase(that: String) = self.toLowerCase == that.toLowerCase
+
+  // object scope:
+  //   extension (s: String) def isSherlock: Boolean = s.startsWith("Sherlock")
 
   object scope:
-    extension (s: String) def isSherlock: Boolean = s.startsWith("Sherlock")
+    extension (self: String):
+      def equalsIgnoreCase(that: String) = self.toLowerCase == that.toLowerCase
+      def isSherlock: Boolean = self.startsWith("Sherlock")
 
   /**
    * EXERCISE 6
@@ -123,3 +144,6 @@ object ext_methods:
    */
   object test:
     // "John Watson".isSherlock
+    import scope._
+    
+    "John Watson".isSherlock
