@@ -15,7 +15,56 @@
  * Enums and case classes provide first-class support for "algebraic data types" 
  * in Scala 3.
  */
-package enums: 
+package enums:
+  final case class Person(name: String, age: Int) // a Record. Maps to relational database tables. Columns are fields. Tables can model all kinds of things.
+  // If we generalize a field, we don't call it a field. We call it a "term". This record contains 2 terms.
+
+  // Sumtypes in Functional Programming -> Records with 1 term
+  // Example: PaymentType - Wiretransfer, Bank Transfer and Credit Card
+  // They are all different. Require different information, and you choose only one when you want to pay.
+  // Records are not the best for this, but a SumType is.
+  // Records are ProductTypes. Opposite of SumType.
+  //
+  // ProductTypes model AND (this term, and this term)
+  // SumTypes model OR (or this term, or this term)
+
+  //Tuple2[String, Int] // A ProductType - Contains both a String and an Int - Products contain all their terms
+  //Either[String, Int] // A SumType - Contains a String OR an Int - Sums contain exactly 1 of their terms
+
+  // Scala 2 has pretty powerful support for ProductTypes. Case Classes. That's how you model classes in Scala 2.
+  // Scala 3 created `enum` to do for SumTypes what case classes do for ProductTypes
+
+  enum FavoriteIDE:
+    case VSCode(version: Int)
+    case IDEA(majorVersion: Int, minorVersion: Int)
+    case Vim
+    case Emacs
+
+  val favIde: FavoriteIDE = FavoriteIDE.VSCode(13)
+
+  // The compiler will force us to handle all these cases in the `match`
+  def example =
+    favIde match
+      case FavoriteIDE.VSCode(v)  => println(s"You like VS Code ${v}")
+      case FavoriteIDE.IDEA(v, _) => println(s"You like IntelliJ IDEA ${v}")
+      case FavoriteIDE.Vim        => println(s"You like Vim!")
+      case FavoriteIDE.Emacs      => println(s"You like Emacs!")
+
+  // For case classes, we get equals, hashCode, toString, for free
+  // In a similar fashion, all the cases of the enum, have hashCode and toString for free too.
+  // In fact, each case of the enum can be regarded as a case class that extends the base type
+  // We no longer need to use `sealed trait`s to do this.
+
+  // In Scala 3
+  // Types should always start with an uppercase letter
+  // Values should always start with a lowercase letter
+
+  // Important note:
+  // You can only enumerate the values of the enum IF all your cases have no parameters.
+  // The moment you add a single parameter to one/any of them, you lose the ability to list them!
+
+  // ----
+
   /**
    * EXERCISE 1
    * 
