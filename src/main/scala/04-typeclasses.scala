@@ -128,6 +128,28 @@ object type_classes:
 
   // ----
 
+  // New TypeClass from the ground up
+
+  // Refactor this:
+  import java.util.UUID
+  trait Identified[-A]: // Contravariant. If we can extract a UUID for any A. And we don't want that for any subtype of A too.
+    def uuid(a: A): UUID
+
+  object resolution:
+
+    trait Identified[-A]:
+      extension (a: A) def uuid: UUID
+  
+    object Identified:
+      given Identified[UUID]:
+        extension (a: UUID) def uuid: UUID = a
+
+    import Identified.given_Identified_UUID
+    ( ??? : UUID).uuid
+
+  // ----
+
+  
   trait PrettyPrint[-A]:
     extension (a: A) def prettyPrint: String
 
