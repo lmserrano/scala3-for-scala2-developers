@@ -228,7 +228,7 @@ object type_classes:
    * print it out to the console using `println`.
    */
   //def prettyPrintIt1[A](a: A)(using pp: PrettyPrint[A]) = println(pp.extension_prettyPrint(a))
-  def prettyPrintIt1[A](a: A)(using pp: PrettyPrint[A]) = println(pp.prettyPrint(a)) // TODO I'm missing something here around 17:00 UTC+0
+  //def prettyPrintIt1[A](a: A)(using pp: PrettyPrint[A]) = println(pp.prettyPrint(a)) // TODO I'm missing something here around 17:00 UTC+0
   // // OR
   def prettyPrintIt2[A: PrettyPrint](a: A) = println(a.prettyPrint)
 
@@ -285,7 +285,8 @@ object conversions:
    * `Rational` (from) and `Double` (to).
    */
   // given ...
-  given Conversion[Rational, Double] = ???
+  given Conversion[Rational, Double]:
+    def apply(r: Rational): Double = r.n.toDouble / r.d.toDouble
 
   /**
    * EXERCISE 2
@@ -293,4 +294,5 @@ object conversions:
    * Multiply a rational number by 2.0 (a double) to verify your automatic
    * conversion works as intended.
    */
-  Rational(1, 2)
+  Rational(1, 2) * 2.0
+  
