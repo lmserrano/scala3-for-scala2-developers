@@ -5,7 +5,65 @@
  * classes after their definition. Previously, this feature was emulated using implicits.
  */
 object ext_methods:
+
+  import scala.concurrent.Future
+  import concurrent.ExecutionContext.Implicits.global
+
+  // def zip[A, B](l: Future[A], r: Future[B]): Future[(A, B)] =
+  //   l.flatMap(l => r.map(r => (l, r)))
+
+  // // We could call zip with two futures l and r:
+  //zip(l, r)
+
+  // // This would be more idiomatic and desirable and natural...
+  //l.zip(r)
+
+  // This is a pervasive problem in all Object Oriented Languages...
+
+  // In other languages, like C#, we use extension methods... Now we have them in Scala 3 too!
+
+  // // In Scala 2 we would do an implicit conversion like this:
+  // class FutureOps[A](self: Future[A]) {
+  //   def zip[B](r: Future[B]): Future[(A, B)] =
+  //     self.flatMap(l => r.map(r => (l, r)))
+  // }
+  // implicit def ToFutureOps[A](future: Future[A]): FutureOps[A] = // This is an implicit conversion in Scala 2
+  //   new FutureOps(future)
+
+  // def l: Future[Int] = ???
+  // def r: Future[String] = ???
+
+  // l.zip(r)
+  // // FutureSyntax
+
+  // // This was one of the 2 use caes for implicits
+  // // But this was so common that we would use implicit classes for auto-wrapping behavior
+  // implicit class FutureOps[A](self: Future[A]) { // extends AnyVal // ... This is broken... very far away from the problem we're trying to solve, which is adding methods to existing classes
+  //   def zip[B](r: Future[B]): Future[(A, B)] =
+  //     self.flatMap(l => r.map(r => (l, r)))
+  // }
+
+  // In reality, we just want to say: "Hey, Scala, please add these methods to this data type..."
+
+  // Now in Scala 3... The "extension" keyword
+  // "extension" + Type parameters that will appear on either part of the expression, Then the Data type you want to extend (and the name associated with that data type, which you can refer to in the definition of the extension method)
+  // This method decoration doesn't allow type parameters. They need to be shifted all the way to the start of the extension method definition.
+  extension [A, B] (self: Future[A]) def zip(r: Future[B]): Future[(A, B)] =
+    self.flatMap(l => r.map(r => (l, r)))
+
+  def l: Future[Int] = ???
+  def r: Future[String] = ???
+
+  l.zip(r)
+
+  // This is great... and I can use it, within that scope
+  // To use it outside the scope, I need to import these extension methods
+
+  // FutureSyntax
+
   final case class Email(value: String)
+
+  //(???: scala.concurrent.Future[Int]).zip // It exists. Scala will always call the original and not our own unless we'd import it or be in its scope.
 
   /**
    * EXERCISE 1
