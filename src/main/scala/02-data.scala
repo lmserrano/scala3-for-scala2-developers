@@ -277,11 +277,25 @@ package case_classes:
    * By making the public constructor private, make a smart constructor for `Email` so that only 
    * valid emails may be created.
    */
-  final case class Email(value: String)
+  // final case class Email(value: String)
+  // object Email:
+  //   def fromString(v: String): Option[Email] = ???
+
+  //   def isValidEmail(v: String): Boolean = v.matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$")
+
+  // We will make the constructor private, so that only Email and the companion object can use it.
+  // This technique is called private(?) constructors
+  final case class Email private (value: String)
   object Email:
-    def fromString(v: String): Option[Email] = ???
+    // def apply(value: String): Email = new Email(value) // because of "case class", Scala 2 gives us this for free
+    // private def apply(value: String): Email = new Email(value) // because of "case class", Scala 2 gives us this for free. We would make it private to force disable external usage
+
+    def fromString(v: String): Option[Email] =
+      if isValidEmail(v) then Some(Email(v)) else None
 
     def isValidEmail(v: String): Boolean = v.matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$")
+
+  // With this "private", we no longer have access to a "copy" method on Email too.
 
   /**
    * EXERCISE 2
@@ -289,7 +303,23 @@ package case_classes:
    * Try to make a copy of an existing `Email` using `Email#copy` and note what happens.
    * 
    */
-  def changeEmail(email: Email): Email = ???
+  //def changeEmail(email: Email): Email = ???
+
+  // // This doesn't work. But is important because it would otherwise pass our validation...
+  //def changeEmail(email: Email): Email = email.copy(email = "not a real email!")
+
+  // // We could do this in Scala 2, but now we can't (because of the apply):
+  // new Email("foo")
+
+  // // The workaround was to define our own apply and make it private...
+
+  /*
+  Georgi KrastevToday at 2:51 PM
+  You have to use `sealed abstract case class` in Scala 2
+  */
+
+  // But now in Scala 3, how do we do this?
+
 
   /**
    * EXERCISE 3
