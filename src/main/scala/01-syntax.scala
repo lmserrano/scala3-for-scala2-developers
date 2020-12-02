@@ -209,8 +209,23 @@ package control_flow:
    * Refactor this `if` statement to eliminate parentheses using the `then` keyword.
    */
   def conditional(x: Int) = 
-    if (x > 0) println("Positive")
+    if x > 0 then println("Positive") // New keyword "then" to denote the end of the predicate of the if statement. Otherwise, it would be ambiguous if we would just remove the parentheses. It could be if x > 0.println("Positive")
     else println("Non-positive")
+
+  /**
+  Could also be formatted in many ways
+  def conditional(x: Int) = 
+    if x > 0
+      then println("Positive")
+    else
+      println("Non-positive")
+
+  def conditional(x: Int) = 
+    if x > 0 then
+      println("Positive")
+    else
+      println("Non-positive")
+  */
 
   /**
    * EXERCISE 2
@@ -218,12 +233,11 @@ package control_flow:
    * Refactor this `while` loop to eliminate parentheses using the `do` keyword.
    */
   def repeatN(n: Int)(body: () => Unit): Unit = 
-    var i = 0 
+    var i = 0
 
-    while (i < n) {
+    while i < n do // Here we use the keyword "do" for the same kind of separation as in the previous exercise.
       body()
-      i = i + 1 
-    }
+      i = i + 1
 
   /**
    * EXERCISE 3
@@ -233,4 +247,4 @@ package control_flow:
   def forComprehension = 
     val numbers = List(1, 2, 9, 3, -1, 6, 5, 2)
 
-    for (i <- numbers) yield i * i
+    for i <- numbers yield i * i // Here we can just delete the parenthesis because the keyword "yield" already makes it non-ambiguous
