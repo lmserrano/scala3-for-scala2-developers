@@ -133,7 +133,7 @@ object ext_methods:
   //   extension (s: String) def isSherlock: Boolean = s.startsWith("Sherlock")
 
   object scope:
-    extension (self: String): // also may work with `extension (self: => String)` // Being lazy on the left side
+    extension (self: String): // also works with `extension (self: => String)` // Being lazy on the left side
       def equalsIgnoreCase(that: String) = self.toLowerCase == that.toLowerCase
       def isSherlock: Boolean = self.startsWith("Sherlock")
 
@@ -147,3 +147,27 @@ object ext_methods:
     import scope._
 
     "John Watson".isSherlock
+
+
+// ---- More
+// Gregor RaymanToday at 3:37 PM
+// The by name extensiosn work :slight_smile: 
+  // object Main:
+  //   def main(args: Array[String]): Unit = 
+  //     "Hello".ifTrue(false)      
+
+  //   extension (s: => String) def ifTrue(b: Boolean) = 
+  //     if b then println(s)
+  //     else println("No!")
+
+  object Main:
+    def hello = 
+      println("Getting hello")
+      "hello"
+
+    def main(args: Array[String]): Unit = 
+      hello.ifTrue(false)      
+
+    extension (s: => String) def ifTrue(b: Boolean) = 
+      if b then println(s)
+      else println("No!")  
