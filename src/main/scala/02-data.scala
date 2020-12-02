@@ -63,6 +63,24 @@ package enums:
   // You can only enumerate the values of the enum IF all your cases have no parameters.
   // The moment you add a single parameter to one/any of them, you lose the ability to list them!
 
+  // Let's improve on the previous example. Now all will need to have `version` defined:
+
+  enum FavoriteIDE2:
+    def version: Int
+    case VSCode(version: Int)
+    case IDEA(version: Int, minorVersion: Int)
+
+    // But note that we can't match against phantom type parameters and that these 2 would just be a inner definition, rather than part of the enum
+    case object Vim {
+      def version = 2
+    }
+    case object Emacs {
+      def version = 1
+    }
+
+  val favIde2 = FavoriteIDE2.VSCode(2)
+  //val favIde2Not = FavoriteIDE2.Vim // This would give an error in this example!!!
+  
   // ----
 
   /**
@@ -70,15 +88,23 @@ package enums:
    * 
    * Convert this "sealed trait" to an enum.
    */
-  sealed trait DayOfWeek
-  object DayOfWeek:
-    case object Sunday extends DayOfWeek
-    case object Monday extends DayOfWeek
-    case object Tuesday extends DayOfWeek
-    case object Wednesday extends DayOfWeek
-    case object Thursday extends DayOfWeek
-    case object Friday extends DayOfWeek
-    case object Saturday extends DayOfWeek
+  // sealed trait DayOfWeek
+  // object DayOfWeek:
+  //   case object Sunday extends DayOfWeek
+  //   case object Monday extends DayOfWeek
+  //   case object Tuesday extends DayOfWeek
+  //   case object Wednesday extends DayOfWeek
+  //   case object Thursday extends DayOfWeek
+  //   case object Friday extends DayOfWeek
+  //   case object Saturday extends DayOfWeek
+  enum DayOfWeek:
+    case Sunday
+    case Monday
+    case Tuesday
+    case Wednesday
+    case Thursday
+    case Friday
+    case Saturday
 
   /**
    * EXERCISE 2
