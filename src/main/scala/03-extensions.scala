@@ -117,10 +117,10 @@ object ext_methods:
   // Let's add a collection of extension methods to the same type
   object rational_extensions: // We've decided to put them all under a single object so that we can just import it if we want to import all these extension methods
     extension (self: Rational):
-      def * (that: Rational): Rational = ???
-      def + (that: Rational): Rational = ???
-      def - (that: Rational): Rational = ???
-  
+      def * (that:Rational): Rational = Rational(that.numerator * self.numerator, self.denominator * that.denominator)
+      def + (that: Rational): Rational = Rational(that.denominator * self.numerator + self.denominator * that.numerator , self.denominator * that.numerator)
+      def - (that: Rational): Rational = Rational(that.denominator * self.numerator - self.denominator * that.numerator,  self.denominator * that.numerator)
+
   /**
    * EXERCISE 5
    * 
@@ -133,7 +133,7 @@ object ext_methods:
   //   extension (s: String) def isSherlock: Boolean = s.startsWith("Sherlock")
 
   object scope:
-    extension (self: String):
+    extension (self: String): // also may work with `extension (self: => String)` // Being lazy on the left side
       def equalsIgnoreCase(that: String) = self.toLowerCase == that.toLowerCase
       def isSherlock: Boolean = self.startsWith("Sherlock")
 
@@ -145,5 +145,5 @@ object ext_methods:
   object test:
     // "John Watson".isSherlock
     import scope._
-    
+
     "John Watson".isSherlock
