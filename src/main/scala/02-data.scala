@@ -232,19 +232,38 @@ package enums:
    * 
    * Take special note of the inferred type parameters in the case constructors!
    */
-  sealed trait Workflow[-Input, +Output]
-  object Workflow:
-    final case class End[Output](value: Output) extends Workflow[Any, Output]
+  // sealed trait Workflow[-Input, +Output]
+  // object Workflow:
+  //   final case class End[Output](value: Output) extends Workflow[Any, Output]
+
+  enum Workflow[-Input, +Output]:
+    case End(value: Output)
 
   /**
    * EXERCISE 6
    * 
    * Convert this "sealed trait" to an enum.
    */
-  sealed trait Conversion[-From, +To]
-  object Conversion:
-    case object AnyToString extends Conversion[Any, String]
-    case object StringToInt extends Conversion[String, Option[Int]]
+  // sealed trait Conversion[-From, +To]
+  // object Conversion:
+  //   case object AnyToString extends Conversion[Any, String]
+  //   case object StringToInt extends Conversion[String, Option[Int]]
+
+  // Polymorphic ADT and Polymorphic enum
+  // //This compiles, but is not what we want (with the commented extends)
+  // enum Conversion[-From, +To]:
+  //   case AnyToString // extends Conversion[Any, String]
+  //   case StringToInt // extends Conversion[String, Option[Int]]
+  //
+  //val a = Conversion.AnyToString // enums.Conversion[Any, Nothing] // This is not what we want!... contravariant and covariant, is why Any and Nothing... not the same as 
+
+  //This compiles, but is not what we want (with the commented extends)
+  enum Conversion[-From, +To]:
+    case AnyToString extends Conversion[Any, String]
+    case StringToInt extends Conversion[String, Option[Int]]
+
+  val a = Conversion.AnyToString // enums.Conversion[Any, String] // This is what we want :)
+
 
 /**
  * CASE CLASSES
